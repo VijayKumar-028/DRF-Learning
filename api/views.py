@@ -13,6 +13,7 @@ from students.models import Student
 from .serializers import EmployeeSerializer, StudentSerializer
 
 
+# function based view to get the whole student details using get and post http methods
 @api_view(["GET", "POST"])
 def studentsView(request):
     if request.method == "GET":
@@ -52,6 +53,7 @@ def StudentDetailView(request, pk):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+# Class Based views to get the employees data
 class Employees(APIView):
     def get(self, request):
         employees = Employee.objects.all()
@@ -66,6 +68,7 @@ class Employees(APIView):
         return Response(serializer.erros, status=status.HTTP_400_BAD_REQUEST)
 
 
+# Class based view to retrieve the each student data
 class EmployeeDetailed(APIView):
     def get_object(self, pk):
         try:
