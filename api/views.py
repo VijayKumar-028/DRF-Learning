@@ -3,11 +3,13 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404, render
 from rest_framework import generics, mixins, status, viewsets
 from rest_framework.decorators import api_view
+from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from blogs.models import Blog, Comment
 from blogs.serializers import BlogSerializer, CommentSerializer
+from employees.filters import EmployeeFilter
 from employees.models import Employee
 from students.models import Student
 
@@ -184,17 +186,21 @@ class EmployeeViewset(viewsets.ViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT) """
 
 
-# # views using ModelViewSets
-# class EmployeeViewset(viewsets.ModelViewSet):
-#     queryset = Employee.objects.all()
-#     serializer_class = EmployeeSerializer
-#      pagination_class=CustomPagination
+# views using ModelViewSets
+class EmployeeViewset(viewsets.ModelViewSet):
+    queryset = Employee.objects.all()
+    serializer_class = EmployeeSerializer
+    pagination_class = CustomPagination
+    filterset_class = EmployeeFilter
 
 
 # ClassBased views using the generics for the blog app
 class BlogView(generics.ListCreateAPIView):
     queryset = Blog.objects.all()
     serializer_class = BlogSerializer
+    filter_backends = [SearchFilter, OrderingFilter]
+    search_fields = ["blog_title", "blog_body"]
+    ordering_fields = ["id", "blog_title"]
 
 
 class CommentView(generics.ListCreateAPIView):
