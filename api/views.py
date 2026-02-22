@@ -6,13 +6,16 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from blogs.models import Blog, Comment
+from blogs.serializers import BlogSerializer, CommentSerializer
 from employees.models import Employee
 from students.models import Student
 
+from .paginations import CustomPagination
 from .serializers import EmployeeSerializer, StudentSerializer
 
-
 # function based view to get the whole student details using get and post http methods
+"""
 @api_view(["GET", "POST"])
 def studentsView(request):
     if request.method == "GET":
@@ -49,7 +52,7 @@ def StudentDetailView(request, pk):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == "DELETE":
         student.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)"""
 
 
 # # Class Based views to get the employees data
@@ -94,7 +97,7 @@ def StudentDetailView(request, pk):
 #         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-# Mixins Based Views
+# Mixins Based Views for employee data
 # class Employees(
 #     mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView
 # ):
@@ -148,7 +151,7 @@ def StudentDetailView(request, pk):
 #     lookup_field = "pk"
 
 
-""" Viewsets based views
+""" Viewsets based views for employee data
 class EmployeeViewset(viewsets.ViewSet):
     def list(self, request):
         queryset = Employee.objects.all()
@@ -180,10 +183,32 @@ class EmployeeViewset(viewsets.ViewSet):
         employee.delete()
         return Response(status=status.HTTP_204_NO_CONTENT) """
 
-"""views using ModelViewSets
+
+# # views using ModelViewSets
+# class EmployeeViewset(viewsets.ModelViewSet):
+#     queryset = Employee.objects.all()
+#     serializer_class = EmployeeSerializer
+#      pagination_class=CustomPagination
 
 
-class EmployeeViewset(viewsets.ModelViewSet):
-    queryset = Employee.objects.all()
-    serializer_class = EmployeeSerializer
-"""
+# ClassBased views using the generics for the blog app
+class BlogView(generics.ListCreateAPIView):
+    queryset = Blog.objects.all()
+    serializer_class = BlogSerializer
+
+
+class CommentView(generics.ListCreateAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+
+
+class CommentDetailedView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    lookup_field = "pk"
+
+
+class BlogDetailedView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Blog.objects.all()
+    serializer_class = BlogSerializer
+    lookup_field = "pk"
